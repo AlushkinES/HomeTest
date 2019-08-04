@@ -103,11 +103,11 @@ namespace HomeTest
                 id = Guid.NewGuid().ToString(),
                 name = "Test Category"
             };
-            var productResult = await RestClient.CreateItem("categories", category);
-            var productId = productResult.Content.ReadAsAsync<CategoryModel>().Result.id;
+            var itemResult = await RestClient.CreateItem("categories", category);
+            var itemId = itemResult.Content.ReadAsAsync<CategoryModel>().Result.id;
             #endregion
             
-            var response = await RestClient.DeleteItem("categories", productId);
+            var response = await RestClient.DeleteItem("categories", itemId);
             var result = await response.Content.ReadAsAsync<CategoryModel>();
             Assert.That(result.name, Is.EqualTo(category.name), "Check category name");
         }
@@ -171,8 +171,8 @@ namespace HomeTest
                 id = Guid.NewGuid().ToString(),
                 name = "Test Category"
             };
-            var productResult = await RestClient.CreateItem("categories", category);
-            var productId = productResult.Content.ReadAsAsync<CategoryModel>().Result.id;
+            var itemResult = await RestClient.CreateItem("categories", category);
+            var itemId = itemResult.Content.ReadAsAsync<CategoryModel>().Result.id;
             #endregion
             
             var modifiedCategory = new CategoryModel
@@ -180,7 +180,7 @@ namespace HomeTest
                 name = "Test123"
             };
             
-            var response = await RestClient.UpdateItem("categories", productId, modifiedCategory);
+            var response = await RestClient.UpdateItem("categories", itemId, modifiedCategory);
             var result = await response.Content.ReadAsAsync<CategoryModel>();
             Assert.That(result.name, Is.EqualTo(modifiedCategory.name), "Check category name");
         }
@@ -213,8 +213,8 @@ namespace HomeTest
             {
                 name = "Test Category"
             };
-            var productResult = await RestClient.CreateItem("categories", category);
-            var productId = productResult.Content.ReadAsAsync<CategoryModel>().Result.id;
+            var itemResult = await RestClient.CreateItem("categories", category);
+            var itemId = itemResult.Content.ReadAsAsync<CategoryModel>().Result.id;
             #endregion
             
             var modifiedCategory = new CategoryModel
@@ -222,7 +222,7 @@ namespace HomeTest
                 name = 123
             };
             
-            var response = await RestClient.UpdateItem("categories", productId, modifiedCategory);
+            var response = await RestClient.UpdateItem("categories", itemId, modifiedCategory);
             var result = await response.Content.ReadAsAsync<ErrorModel>();
 
             

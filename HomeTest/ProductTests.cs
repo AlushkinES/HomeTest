@@ -48,7 +48,7 @@ namespace HomeTest
         
         [Test]
         [Description("Check max limit")]
-        public async Task GetCategories_MaxLimit()
+        public async Task GetProducts_MaxLimit()
         {
             var response = await RestClient.GetAllItems("products?$limit=99");
             var results = await response.Content.ReadAsAsync<CategoriesModel>();
@@ -77,11 +77,11 @@ namespace HomeTest
                 url = "Test link",
                 image = "Test image"
             };
-            var productResult = await RestClient.CreateItem("products", product);
-            var productId = productResult.Content.ReadAsAsync<ProductModel>().Result.id;
+            var itemResult = await RestClient.CreateItem("products", product);
+            var itemId = itemResult.Content.ReadAsAsync<ProductModel>().Result.id;
             #endregion
             
-            var response = await RestClient.GetItem("products", productId);
+            var response = await RestClient.GetItem("products", itemId);
             var result = await response.Content.ReadAsAsync<ProductModel>();
             Assert.That(result.name, Is.EqualTo(product.name), "Check product name");
             Assert.That(result.type, Is.EqualTo(product.type), "Check product type");
@@ -124,11 +124,11 @@ namespace HomeTest
                 url = "Test link",
                 image = "Test image"
             };
-            var productResult = await RestClient.CreateItem("products", product);
-            var productId = productResult.Content.ReadAsAsync<ProductModel>().Result.id;
+            var itemResult = await RestClient.CreateItem("products", product);
+            var itemId = itemResult.Content.ReadAsAsync<ProductModel>().Result.id;
             #endregion
             
-            var response = await RestClient.DeleteItem("products",productId);
+            var response = await RestClient.DeleteItem("products",itemId);
             var result = await response.Content.ReadAsAsync<ProductModel>();
             Assert.That(result.name, Is.EqualTo(product.name), "Check product name");
             Assert.That(result.type, Is.EqualTo(product.type), "Check product type");
@@ -230,8 +230,8 @@ namespace HomeTest
                 url = "Test link",
                 image = "Test image"
             };
-            var productResult = await RestClient.CreateItem("products", product);
-            var productId = productResult.Content.ReadAsAsync<ProductModel>().Result.id;
+            var itemResult = await RestClient.CreateItem("products", product);
+            var itemId = itemResult.Content.ReadAsAsync<ProductModel>().Result.id;
             #endregion
             
             var modifiedProduct = new ProductModel
@@ -248,7 +248,7 @@ namespace HomeTest
                 image = "Test123"
             };
             
-            var response = await RestClient.UpdateItem("products", productId, modifiedProduct);
+            var response = await RestClient.UpdateItem("products", itemId, modifiedProduct);
             var result = await response.Content.ReadAsAsync<ProductModel>();
 
             
@@ -301,8 +301,8 @@ namespace HomeTest
                 url = "Test link",
                 image = "Test image"
             };
-            var productResult = await RestClient.CreateItem("products", product);
-            var productId = productResult.Content.ReadAsAsync<ProductModel>().Result.id;
+            var itemResult = await RestClient.CreateItem("products", product);
+            var itemId = itemResult.Content.ReadAsAsync<ProductModel>().Result.id;
             #endregion
             
             var modifiedProduct = new ProductModel
@@ -319,7 +319,7 @@ namespace HomeTest
                 image = "Test123"
             };
             
-            var response = await RestClient.UpdateItem("products", productId, modifiedProduct, false);
+            var response = await RestClient.UpdateItem("products", itemId, modifiedProduct, false);
             var result = await response.Content.ReadAsAsync<ErrorModel>();
 
             

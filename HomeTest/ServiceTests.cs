@@ -23,7 +23,7 @@ namespace HomeTest
         [TestCase(7)]
         [TestCase(25)]
         [Description("Get services by limit")]
-        public async Task GetCategories_ByLimit(int limit)
+        public async Task GetServices_ByLimit(int limit)
         {
             var response = await RestClient.GetAllItems("services?$limit=" + limit);
             var results = await response.Content.ReadAsAsync<ServicesModel>();
@@ -36,7 +36,7 @@ namespace HomeTest
         
         [Test]
         [Description("Check max limit")]
-        public async Task GetCategories_MaxLimit()
+        public async Task GetServices_MaxLimit()
         {
             var response = await RestClient.GetAllItems("services?$limit=99");
             var results = await response.Content.ReadAsAsync<ServicesModel>();
@@ -97,11 +97,11 @@ namespace HomeTest
             {
                 name = "Test Service"
             };
-            var productResult = await RestClient.CreateItem("services", service);
-            var productId = productResult.Content.ReadAsAsync<ServiceModel>().Result.id;
+            var itemResult = await RestClient.CreateItem("services", service);
+            var itemId = itemResult.Content.ReadAsAsync<ServiceModel>().Result.id;
             #endregion
             
-            var response = await RestClient.DeleteItem("services", productId.ToString());
+            var response = await RestClient.DeleteItem("services", itemId.ToString());
             var result = await response.Content.ReadAsAsync<ServiceModel>();
             Assert.That(result.name, Is.EqualTo(service.name), "Check service name");
         }
@@ -158,8 +158,8 @@ namespace HomeTest
             {
                 name = "Test Service"
             };
-            var productResult = await RestClient.CreateItem("services", service);
-            var productId = productResult.Content.ReadAsAsync<ServiceModel>().Result.id;
+            var itemResult = await RestClient.CreateItem("services", service);
+            var itemId = itemResult.Content.ReadAsAsync<ServiceModel>().Result.id;
             #endregion
             
             var modifiedService = new ServiceModel
@@ -167,7 +167,7 @@ namespace HomeTest
                 name = "Test123"
             };
             
-            var response = await RestClient.UpdateItem("services", productId, modifiedService);
+            var response = await RestClient.UpdateItem("services", itemId, modifiedService);
             var result = await response.Content.ReadAsAsync<ServiceModel>();
 
             
@@ -201,8 +201,8 @@ namespace HomeTest
             {
                 name = "Test Service"
             };
-            var productResult = await RestClient.CreateItem("services", service);
-            var productId = productResult.Content.ReadAsAsync<ServiceModel>().Result.id;
+            var itemResult = await RestClient.CreateItem("services", service);
+            var itemId = itemResult.Content.ReadAsAsync<ServiceModel>().Result.id;
             #endregion
             
             var modifiedService = new ServiceModel
@@ -210,7 +210,7 @@ namespace HomeTest
                 name = 123
             };
             
-            var response = await RestClient.UpdateItem("services", productId, modifiedService);
+            var response = await RestClient.UpdateItem("services", itemId, modifiedService);
             var result = await response.Content.ReadAsAsync<ErrorModel>();
 
             

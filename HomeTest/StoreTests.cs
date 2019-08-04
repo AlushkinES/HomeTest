@@ -124,11 +124,11 @@ namespace HomeTest
                 lng = 456,
                 hours = "Test hours"
             };
-            var productResult = await RestClient.CreateItem("stores", store);
-            var productId = productResult.Content.ReadAsAsync<StoreModel>().Result.id;
+            var itemResult = await RestClient.CreateItem("stores", store);
+            var itemId = itemResult.Content.ReadAsAsync<StoreModel>().Result.id;
             #endregion
             
-            var response = await RestClient.DeleteItem("stores", productId);
+            var response = await RestClient.DeleteItem("stores", itemId);
             var result = await response.Content.ReadAsAsync<StoreModel>();
             Assert.That(result.name, Is.EqualTo(store.name), "Check store name");
             Assert.That(result.type, Is.EqualTo(store.type), "Check store type");
@@ -230,8 +230,8 @@ namespace HomeTest
                 lng = 222,
                 hours = "Test hours"
             };
-            var productResult = await RestClient.CreateItem("stores", store);
-            var productId = productResult.Content.ReadAsAsync<StoreModel>().Result.id;
+            var itemResult = await RestClient.CreateItem("stores", store);
+            var itemId = itemResult.Content.ReadAsAsync<StoreModel>().Result.id;
             #endregion
             
             var modifiedStore = new StoreModel
@@ -248,7 +248,7 @@ namespace HomeTest
                 hours = "Test123"
             };
             
-            var response = await RestClient.UpdateItem("stores", productId, modifiedStore);
+            var response = await RestClient.UpdateItem("stores", itemId, modifiedStore);
             var result = await response.Content.ReadAsAsync<StoreModel>();
 
             
@@ -309,8 +309,8 @@ namespace HomeTest
                 lng = 222,
                 hours = "Test hours"
             };
-            var productResult = await RestClient.CreateItem("stores", store);
-            var productId = productResult.Content.ReadAsAsync<StoreModel>().Result.id;
+            var itemResult = await RestClient.CreateItem("stores", store);
+            var itemId = itemResult.Content.ReadAsAsync<StoreModel>().Result.id;
             #endregion
             
             var modifiedStore = new StoreModel
@@ -327,7 +327,7 @@ namespace HomeTest
                 hours = "Test123"
             };
             
-            var response = await RestClient.UpdateItem("stores", productId, modifiedStore);
+            var response = await RestClient.UpdateItem("stores", itemId, modifiedStore);
             var result = await response.Content.ReadAsAsync<ErrorModel>();
 
             
