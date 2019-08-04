@@ -11,55 +11,55 @@ namespace RestApiHelper
 {
     public class RestClient
     {
-        private static readonly HttpClient client = new HttpClient();
-        private string controller;
-
-        public RestClient(string url, string item)
+        private static HttpClient client = new HttpClient
         {
-            client.BaseAddress = new Uri(url);
+            BaseAddress = new Uri("http://localhost:3030/")
+        };
+
+        public RestClient()
+        {
             client.DefaultRequestHeaders.Accept.Clear();
             client.DefaultRequestHeaders.Accept.Add(
                 new MediaTypeWithQualityHeaderValue("application/json"));
-            controller = item;
         }
         
-        public async Task<T> GetAllItems<T>(bool checkResponse = true)
+        public static async Task<HttpResponseMessage> GetAllItems(string path, bool checkResponse = true)
         {
-            var response = await client.GetAsync(controller);
+
+            var response = await client.GetAsync(path);
             if (checkResponse) 
-                CheckResponse(response);
-            var result = await response.Content.ReadAsAsync<T>();
-            return result;
+                CheckResponse(response); 
+            return response;
         }
 
-        public async Task<HttpResponseMessage> GetItem(string id, bool checkResponse = true)
+        public static async Task<HttpResponseMessage> GetItem(string path, string id, bool checkResponse = true)
         {
-            var response = await client.GetAsync($"{controller}/{id}");
+            var response = await client.GetAsync($"{path}/{id}");
             if (checkResponse) 
                 CheckResponse(response); 
             return response;
         }
         
-        public async Task<HttpResponseMessage> CreateItem<T>(T content, bool checkResponse = true)
+        public static async Task<HttpResponseMessage> CreateItem<T>(string path, T content, bool checkResponse = true)
         {
-            var response = await client.PostAsJsonAsync(controller, content);
+            var response = await client.PostAsJsonAsync(path, content);
             if (checkResponse) 
                 CheckResponse(response);
             return response;
         }
         
-        public async Task<HttpResponseMessage>  DeleteItem(string id, bool checkResponse = true)
+        public static async Task<HttpResponseMessage>  DeleteItem(string path, string id, bool checkResponse = true)
         {
-            var response = await client.DeleteAsync($"{controller}/{id}");
+            var response = await client.DeleteAsync($"{path}/{id}");
             if (checkResponse) 
                 CheckResponse(response);
             return response;
         }
         
-        public async Task<HttpResponseMessage>  UpdateItem<T>(string id, T content, bool checkResponse = true)
+        public static async Task<HttpResponseMessage>  UpdateItem<T>(string path, string id, T content, bool checkResponse = true)
         {
             var stringContent = new StringContent(JsonConvert.SerializeObject(content), Encoding.UTF8, "application/json");
-            var response = await PatchAsync($"{controller}/{id}", stringContent);
+            var response = await PatchAsync($"{path}/{id}", stringContent);
             if (checkResponse) 
                 CheckResponse(response);
             return response;
@@ -77,7 +77,7 @@ namespace RestApiHelper
             return client.SendAsync(request);
         }
 
-        private void CheckResponse(HttpResponseMessage message)
+        private static void CheckResponse(HttpResponseMessage message)
         {
             Assert.IsTrue(message.IsSuccessStatusCode, "Error with status code: " + message.StatusCode);
         }

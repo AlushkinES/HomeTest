@@ -12,17 +12,51 @@ namespace HomeTest
     [Timeout(30000)]
     public class StoreTests
     {
-        private RestClient _restClient;
+        private RestClient RestClient;
         [OneTimeSetUp]
         public void OneTimeSetUp()
         {
-            _restClient = new RestClient("http://localhost:3030/", "stores");
+            RestClient = new RestClient();
         }
         
         [Test]
         public async Task GetStores()
         {
-            var response = await _restClient.GetAllItems<StoresModel>();
+            var response = await RestClient.GetAllItems("stores");
+            var results = await response.Content.ReadAsAsync<StoresModel>();
+            
+            Assert.That(results.limit, Is.EqualTo(10), "Check limit in GetAllItems request");
+            Assert.That(results.skip, Is.EqualTo(0), "Check skip in GetAllItems request");
+            Assert.That(results.total, Is.GreaterThan(0), "Check total in GetAllItems request");
+            Assert.That(results.data.Count, Is.EqualTo(results.limit), "Check count of data in GetAllItems request");
+        }
+        
+        [TestCase(5)]
+        [TestCase(7)]
+        [TestCase(25)]
+        [Description("Get stores by limit")]
+        public async Task GetCategories_ByLimit(int limit)
+        {
+            var response = await RestClient.GetAllItems("stores?$limit=" + limit);
+            var results = await response.Content.ReadAsAsync<StoresModel>();
+            
+            Assert.That(results.limit, Is.EqualTo(limit), "Check limit in GetAllItems request");
+            Assert.That(results.skip, Is.EqualTo(0), "Check skip in GetAllItems request");
+            Assert.That(results.total, Is.GreaterThan(0), "Check total in GetAllItems request");
+            Assert.That(results.data.Count, Is.EqualTo(results.limit), "Check count of data in GetAllItems request");
+        }
+        
+        [Test]
+        [Description("Check max limit")]
+        public async Task GetCategories_MaxLimit()
+        {
+            var response = await RestClient.GetAllItems("stores?$limit=99");
+            var results = await response.Content.ReadAsAsync<StoresModel>();
+            
+            Assert.That(results.limit, Is.EqualTo(25), "Check limit in GetAllItems request");
+            Assert.That(results.skip, Is.EqualTo(0), "Check skip in GetAllItems request");
+            Assert.That(results.total, Is.GreaterThan(0), "Check total in GetAllItems request");
+            Assert.That(results.data.Count, Is.EqualTo(results.limit), "Check count of data in GetAllItems request");
         }
         
         [Test]
@@ -43,11 +77,11 @@ namespace HomeTest
                 lng = 123,
                 hours = "Test link"
             };
-            var storeResult = await _restClient.CreateItem(store);
+            var storeResult = await RestClient.CreateItem("stores", store);
             var storeId = storeResult.Content.ReadAsAsync<StoreModel>().Result.id;
             #endregion
             
-            var response = await _restClient.GetItem(storeId.ToString());
+            var response = await RestClient.GetItem("stores", storeId);
             var result = await response.Content.ReadAsAsync<StoreModel>();
             Assert.That(result.name, Is.EqualTo(store.name), "Check store name");
             Assert.That(result.type, Is.EqualTo(store.type), "Check store type");
@@ -65,7 +99,7 @@ namespace HomeTest
         [Description("Unsuccessful getting store with NotFound error")]
         public async Task GetStore_NotFound()
         {
-            var response = await _restClient.GetItem("0", false);
+            var response = await RestClient.GetItem("stores", "0", false);
             var result = await response.Content.ReadAsAsync<ErrorModel>();
             Assert.That(result.name, Is.EqualTo("NotFound"), "Check error name");
             Assert.That(result.code, Is.EqualTo(404), "Check error name");
@@ -90,11 +124,11 @@ namespace HomeTest
                 lng = 456,
                 hours = "Test hours"
             };
-            var productResult = await _restClient.CreateItem(store);
+            var productResult = await RestClient.CreateItem("stores", store);
             var productId = productResult.Content.ReadAsAsync<StoreModel>().Result.id;
             #endregion
             
-            var response = await _restClient.DeleteItem(productId.ToString());
+            var response = await RestClient.DeleteItem("stores", productId);
             var result = await response.Content.ReadAsAsync<StoreModel>();
             Assert.That(result.name, Is.EqualTo(store.name), "Check store name");
             Assert.That(result.type, Is.EqualTo(store.type), "Check store type");
@@ -111,7 +145,7 @@ namespace HomeTest
         [Test]
         public async Task DeleteStore_NotFound()
         {
-            var response = await _restClient.DeleteItem("0", false);
+            var response = await RestClient.DeleteItem("stores", "0", false);
             var result = await response.Content.ReadAsAsync<ErrorModel>();
             Assert.That(result.name, Is.EqualTo("NotFound"), "Check error name");
             Assert.That(result.code, Is.EqualTo(404), "Check error name");
@@ -136,7 +170,7 @@ namespace HomeTest
                 hours = "Test hours"
             };
             
-            var response = await _restClient.CreateItem(store);
+            var response = await RestClient.CreateItem("stores", store);
             var result = await response.Content.ReadAsAsync<StoreModel>();
             
             Assert.That(result.name, Is.EqualTo(store.name), "Check store name");
@@ -168,7 +202,7 @@ namespace HomeTest
                 hours = "Test"
             };
             
-            var response = await _restClient.CreateItem(store, false);
+            var response = await RestClient.CreateItem("stores", store, false);
             var result = await response.Content.ReadAsAsync<ErrorModel>();
             
             Assert.That(result.name, Is.EqualTo("BadRequest"), "Check error name");
@@ -196,7 +230,7 @@ namespace HomeTest
                 lng = 222,
                 hours = "Test hours"
             };
-            var productResult = await _restClient.CreateItem(store);
+            var productResult = await RestClient.CreateItem("stores", store);
             var productId = productResult.Content.ReadAsAsync<StoreModel>().Result.id;
             #endregion
             
@@ -214,7 +248,7 @@ namespace HomeTest
                 hours = "Test123"
             };
             
-            var response = await _restClient.UpdateItem(productId.ToString(), modifiedStore);
+            var response = await RestClient.UpdateItem("stores", productId, modifiedStore);
             var result = await response.Content.ReadAsAsync<StoreModel>();
 
             
@@ -247,7 +281,7 @@ namespace HomeTest
                 hours = "Test123"
             };
             
-            var response = await _restClient.UpdateItem("0", modifiedStore, false);
+            var response = await RestClient.UpdateItem("stores", "0", modifiedStore, false);
             var result = await response.Content.ReadAsAsync<ErrorModel>();
 
             
@@ -275,7 +309,7 @@ namespace HomeTest
                 lng = 222,
                 hours = "Test hours"
             };
-            var productResult = await _restClient.CreateItem(store);
+            var productResult = await RestClient.CreateItem("stores", store);
             var productId = productResult.Content.ReadAsAsync<StoreModel>().Result.id;
             #endregion
             
@@ -293,7 +327,7 @@ namespace HomeTest
                 hours = "Test123"
             };
             
-            var response = await _restClient.UpdateItem(productId.ToString(), modifiedStore);
+            var response = await RestClient.UpdateItem("stores", productId, modifiedStore);
             var result = await response.Content.ReadAsAsync<ErrorModel>();
 
             

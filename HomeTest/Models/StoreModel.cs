@@ -13,7 +13,7 @@ namespace HomeTest.DTO
         public string state { get; set; }
         public string zip { get; set; }
         public dynamic lat { get; set; }
-        public int lng { get; set; }
+        public double lng { get; set; }
         public string hours { get; set; }
         [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
         public List<ServiceModel> services { get; set; }
